@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <titleAbout Karpenter</title>
+        <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body class="theme-default aui-theme-default">
+        <div id="page">
+            <div id="main" class="aui-page-panel">
+                <div id="main-header">
+                    
+                    <h1 id="title-heading" class="pagetitle">
+                                                <span id="title-text">
+                            About Karpenter
+                        </span>
+                    </h1>
+                </div>
+
+                <div id="content" class="view">
+                    <div class="page-metadata">
+                        
+        
+    
+    
+        
+    
+        
+        
+                        </div>
+                    <div id="main-content" class="wiki-content group">
+                    <h1 id="AboutKarpenter-/*&lt;![CDATA[*/div.rbtoc1746903434942{padding:0px;}div.rbtoc1746903434942ul{margin-left:0px;}div.rbtoc1746903434942li{margin-left:0px;padding-left:0px;}/*]]&gt;*/#AboutKarpenter-WhatisKarpenter?#AboutKarpenter-WhatisKarpenter?KeyFeatures#AboutKa"><style type='text/css'>/*<![CDATA[*/
+div.rbtoc1746903434942 {padding: 0px;}
+div.rbtoc1746903434942 ul {margin-left: 0px;}
+div.rbtoc1746903434942 li {margin-left: 0px;padding-left: 0px;}
+
+/*]]>*/</style><div class='toc-macro rbtoc1746903434942'>
+<ul class='toc-indentation'>
+<li><a href='#AboutKarpenter-'></a></li>
+<li><a href='#AboutKarpenter-WhatisKarpenter?'>What is Karpenter?</a></li>
+<li><a href='#AboutKarpenter-KeyFeatures'>Key Features</a></li>
+<li><a href='#AboutKarpenter-HowItWorks'>How It Works</a></li>
+<li><a href='#AboutKarpenter-HowKarpenterDiffersfromTraditionalAuto-Scalers'>How Karpenter Differs from Traditional Auto-Scalers</a></li>
+<li><a href='#AboutKarpenter-KeyConcepts'>Key Concepts</a>
+<ul class='toc-indentation'>
+<li><a href='#AboutKarpenter-Provisioners:'>Provisioners:</a></li>
+<li><a href='#AboutKarpenter-AWS-Node-Templates'>AWS-Node-Templates</a></li>
+</ul>
+</li>
+<li><a href='#AboutKarpenter-HowKarpenterisconfiguredinproject-z'>How Karpenter is configured in project-z</a>
+<ul class='toc-indentation'>
+<li><a href='#AboutKarpenter-DefaultAwsNodeTemplatesandProvisioners'>Default AwsNodeTemplates and Provisioners</a></li>
+<li><a href='#AboutKarpenter-CustomProvisionerforEKSadd-ons,3rd-partyandmonitoringapplications'>Custom Provisioner for EKS add-ons, 3rd-party and monitoring applications</a></li>
+<li><a href='#AboutKarpenter-EnsuringthattheDaemonsetscreatedbyEKSadd-ons,3rd-partyandmonitoringapplicationsonlyrunonKarpenterprovisionednodes'>Ensuring that the Daemonsets created by EKS add-ons, 3rd-party and monitoring applications only run on Karpenter provisioned nodes</a></li>
+<li><a href='#AboutKarpenter-Provisionersforproject-zPilotDeployment:oneprovisionerpertestenvironment'>Provisioners for project-z Pilot Deployment: one provisioner per test environment</a>
+<ul class='toc-indentation'>
+<li><a href='#AboutKarpenter-Howdoweensurethatonetestenvironmentrunsonasingle,dedicated,node?'>How do we ensure that one test environment runs on a single, dedicated, node?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div></h1><h1 id="AboutKarpenter-WhatisKarpenter?">What is Karpenter?</h1><p>Karpenter is an open-source, flexible, high-performance Kubernetes cluster autoscaler built by AWS. It’s designed to improve our application availability and cluster efficiency by rapidly launching right-sized compute resources in response to changing application load.</p><h1 id="AboutKarpenter-KeyFeatures">Key Features</h1><ol><li><strong>Improve Application Availability: </strong>Karpenter responds quickly and automatically to changes in application load, scheduling, and resource requirements. It places new workloads onto a variety of available compute resource capacity.</li><li><strong>Lower Compute Costs</strong>: Karpenter lowers cluster compute costs by looking for opportunities to remove under-utilised nodes, replace expensive nodes with cheaper alternatives, and consolidate workloads onto more efficient compute resources.</li><li><strong>Minimise Operational Overhead: </strong>Karpenter comes with a set of opinionated defaults in a single, declarative Provisioner resource which can easily be customised.</li><li><strong>No Additional Configuration Required!: </strong>Karpenter is designed to work out of the box with minimal configuration, making it easy to get started.</li></ol><h1 id="AboutKarpenter-HowItWorks">How It Works</h1><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" draggable="false" height="400" src="attachments/1180860429/1180860430.png" data-image-src="attachments/1180860429/1180860430.png" data-unresolved-comment-count="0" data-linked-resource-id="1180860430" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image-2024-2-15_17-51-27.png" data-base-url="https://ie-confluence.vocalink.co.uk" data-linked-resource-content-type="image/png" data-linked-resource-container-id="1180860429" data-linked-resource-container-version="1" alt=""></span></p><p>Karpenter works by observing the aggregate resource requests of unscheduled pods and making decisions to launch and terminate nodes to minimize scheduling latencies and infrastructure cost. Here’s a simple breakdown of how it works:</p><ol><li><strong>Observation:</strong> Karpenter observes the workload on your Kubernetes cluster. It watches for any pending pods that Kubernetes can’t schedule due to lack of resources.</li><li><strong>Decision Making:</strong> When an application requires more resources, Karpenter makes decisions based on the application’s specific resource requirements. It uses custom controllers and operators to manage nodes.</li><li><strong>Provisioning:</strong> Karpenter provisions nodes directly by talking to the AWS EC2 fleet API. It creates new resources and adds them to the cluster as needed.</li><li><strong>Resource Allocation:</strong> Karpenter is intelligent enough to understand your workload’s specific resource requirements and divide resources accordingly. It can handle pod requests for configurations like arm64-based instances or GPU2.</li><li><strong>Zone Awareness:</strong> Karpenter is aware of things like a pod’s volume claim Availability Zone requirements. It can correctly determine what zone to place a node in, avoiding a common issue with cluster autoscaler not making zone-aware scaling choices.</li></ol><p>Lets look at an example:</p><ol><li>Suppose you’re running a data processing application on a Kubernetes cluster. This application processes large datasets and generates reports. The size and frequency of these datasets vary significantly, and some datasets require more resources to process than others.</li><li>One day, a large dataset arrives that needs to be processed immediately. Your application creates new pods to process this dataset, but there aren’t enough resources in your cluster to schedule these pods.</li><li>Karpenter observes the unscheduled pods and their resource requirements. It then talks to the AWS EC2 fleet API and provisions new nodes that match these requirements. These could be high-memory or high-CPU instances, depending on the needs of the pods.</li><li>Once the new nodes are ready, the pods are scheduled on these nodes, and your application starts processing the dataset.</li><li>After the dataset has been processed and the reports have been generated, the pods are terminated. Karpenter observes that the nodes are now underutilized. It decides to terminate these nodes to save costs.</li><li>Before the nodes are terminated, any remaining pods are rescheduled to other nodes in the cluster.</li></ol><h1 id="AboutKarpenter-HowKarpenterDiffersfromTraditionalAuto-Scalers">How Karpenter Differs from Traditional Auto-Scalers</h1><ul style="list-style-type: square;"><li>Traditional auto-scalers, like the Kubernetes Cluster Autoscaler, increase or decrease the size of a Kubernetes cluster based on demand. They add or remove nodes to ensure everything runs well.</li><li>Karpenter, on the other hand, takes a different approach. Instead of adding or removing nodes based on demand, Karpenter provisions nodes based on application requirements. This means that it can optimise resource utilisation and reduce costs. </li></ul><p>Lets look at an example:</p><p>Imagine you’re running a Kubernetes cluster with a traditional Cluster Autoscaler. You have a web application that experiences a sudden spike in traffic. The Cluster Autoscaler observes the increased demand and adds more nodes to the cluster to handle the load. Once the traffic spike is over, the Cluster Autoscaler removes the extra nodes to save costs. This approach is reactive - the Cluster Autoscaler reacts to changes in demand.</p><p>Now, let’s consider the same scenario but with Karpenter instead of the Cluster Autoscaler. When the traffic to your web application increases, Karpenter doesn’t just add more nodes. Instead, it looks at the specific resource requirements of the new pods (CPU, memory, etc.) that your application is trying to schedule. Karpenter then talks to the cloud provider’s API (e.g., AWS EC2) and provisions nodes that exactly match these requirements. This could be a mix of different types of nodes - some with more CPU, some with more memory, depending on what the pods need. This approach is proactive and application-aware - Karpenter provisions nodes based on application requirements, not just demand.</p><h1 id="AboutKarpenter-KeyConcepts">Key Concepts</h1><h2 id="AboutKarpenter-Provisioners:">Provisioners:</h2><p>A Provisioner in Karpenter is a custom resource that specifies the configuration for node provisioning. It sets constraints on the nodes that can be created by Karpenter and the pods that can run on those nodes. Here are some key points about Provisioners:<br/><strong>Taints:</strong> Provisioners can define taints to limit the pods that can run on nodes Karpenter creates.<br/><strong>Zones, Instance Types, and Architectures: </strong>Provisioners can limit node creation to certain zones, instance types, and computer architectures.<br/><strong>Node Expiration:</strong> Provisioners can set defaults for node expiration1.<br/><strong>Multiple Provisioners:</strong> You can have multiple Provisioners configured on the same cluster.</p><p><strong>Example:</strong></p><p>Based of the pod's resource requirements, the below provisioner selects the CHEAPEST node from &quot;t3&quot; or &quot;m6&quot; instance families, and then, will only select micro, small or medium instance types.</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default-provisioner
+spec:
+  requirements:
+    # Include general purpose instance families
+    - key: karpenter.k8s.aws/instance-family
+      operator: In
+      values: [t3, m6]
+    # Use only smaller instance sizes
+    - key: karpenter.k8s.aws/instance-size
+      operator: In
+      values: [micro, small, medium]
+  ttlSecondsUntilExpired: 604800 # expire nodes after 7 days (in seconds) = 7 * 60 * 60 * 24
+  ttlSecondsAfterEmpty: 60 # scale down nodes after 60 seconds without workloads (excluding daemons)
+  providerRef:
+    name: default-node-template
+
+</pre>
+</div></div><p><br/></p><h2 id="AboutKarpenter-AWS-Node-Templates">AWS-Node-Templates</h2><p>The AWSNodeTemplate is a custom resource in Karpenter that enables configuration of AWS specific settings. Each provisioner must reference an AWSNodeTemplate using spec.providerRef.</p><p>Here are some key points about AWSNodeTemplate:<br/><strong>Subnet and Security Group Selection:</strong> The AWSNodeTemplate discovers subnets and security groups using AWS tags.<br/><strong>Instance Profile, AMI, and UserData: </strong>The AWSNodeTemplate allows you to specify an instance profile, AMI family, and UserData.<br/><strong>Tags:</strong> The AWSNodeTemplate allows you to propagate tags to underlying EC2 resources.<br/><strong>Block Device Mappings and Detailed Monitoring:</strong> The AWSNodeTemplate allows you to configure storage devices for the instance and detailed monitoring.</p><p><strong>Example: </strong></p><p>The below AwsNodeTemplate specifies that Provisioners can run nodes in AWS Subnets that have the tag &quot;karpenter.sh/discovery: non-prod&quot; and use Security-Groups that also have the tag &quot;karpenter.sh/discovery: non-prod&quot;. And, an EBS volume of 20GB is attached to each node.</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: default-node-template
+spec:
+  amiFamily: AL2
+  subnetSelector:
+    karpenter.sh/discovery: non-prod
+  securityGroupSelector:
+    karpenter.sh/discovery: non-prod
+  blockDeviceMappings:
+    - deviceName: /dev/xvdb
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        deleteOnTermination: true</pre>
+</div></div><p><br/></p><h1 id="AboutKarpenter-HowKarpenterisconfiguredinproject-z">How Karpenter is configured in project-z</h1><p>In project-z, Karptenter is installed using Terraform</p><p>Karpenter requires a runtime environment and worker nodes to run on. It’s installed within Fargate, aligning with our serverless commitment.</p><h2 id="AboutKarpenter-DefaultAwsNodeTemplatesandProvisioners">Default AwsNodeTemplates and Provisioners</h2><p>We created the following defaults:</p><p>AwsNodeTemplates</p><ul style="list-style-type: square;"><li>an AwsNodeTemplate that use AmazonLinux2 AMIs</li><li>an AwsNodeTemplate that use BottleRocket AMIs</li></ul><p>Provisioner</p><ul style="list-style-type: square;"><li>an Provisioner that use AmazonLinux2 AwsNodeTemplate (has the highest priority)</li><li>an Provisioner that use BottleRocket AwsNodeTemplate</li></ul><p>If one were to deploy a pod into EKS, the default AmazonLinux2 Provisioner will be used to provision a node to run that pod.</p><h2 id="AboutKarpenter-CustomProvisionerforEKSadd-ons,3rd-partyandmonitoringapplications">Custom Provisioner for EKS add-ons, 3rd-party and monitoring applications</h2><p>We created a custom provisioner - <span style="color: rgb(206,145,120);">eks-addons-amz-lnx-prov </span>- for creating one single node for running ALL EKS add-ons, 3rd-party and monitoring applications.</p><p>Key features of this provisioner:</p><ul style="list-style-type: square;"><li>creates a label on the node: workload: eks-addons</li><li>taints the node with: eks-addons:true:NoSchedule</li></ul><p>All EKS add-ons, 3rd-party and monitoring applications have the following configured to ensure that they are deployed on the node created by the custom provisioner - <span style="color: rgb(206,145,120);">eks-addons-amz-lnx-prov</span></p><ul style="list-style-type: square;"><li>nodeSelector: workload: eks-addons</li><li>tolerations for: eks-addons:true:NoSchedule</li></ul><h2 id="AboutKarpenter-EnsuringthattheDaemonsetscreatedbyEKSadd-ons,3rd-partyandmonitoringapplicationsonlyrunonKarpenterprovisionednodes">Ensuring that the Daemonsets created by EKS add-ons, 3rd-party and monitoring applications only run on Karpenter provisioned nodes</h2><p>Fargate does not support Daemonsets. So, to ensure that any Daemonsets created by EKS add-ons, 3rd-party and monitoring applications ONLY run on Karpetner provisioner nodes, we need to add the following &quot;Affinity&quot; rule to the Daemonsets:</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: eks.amazonaws.com/compute-type
+          operator: NotIn
+          values:
+          - fargate</pre>
+</div></div><h2 id="AboutKarpenter-Provisionersforproject-zPilotDeployment:oneprovisionerpertestenvironment">Provisioners for project-z Pilot Deployment: one provisioner per test environment</h2><p>To save costs, we decided to run a single, entire, project-z Pilot deployment test environment on a single, dedicated, node.</p><p>To do this, we dynamically create one provisioner per test environment, during test environment creation.</p><p>The code for dynamic provisioner creation, using Ansible, is here: </p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">src/ansible/roles/create-karpenter-provisioner/defaults/main.yml
+---
+tmp_dir: &quot;/tmp/karpenter&quot;
+
+aws_node_template_name: amazon-linux-nt
+
+mode_settings:
+  performance:
+    instance_type: m6a.4xlarge
+    limits:
+      cpu: 16000m
+      memory: 64Gi
+  cost-saving:
+    instance_type: t3a.2xlarge
+    limits:
+      cpu: 8000m
+      memory: 32Gi
+
+
+src/ansible/roles/create-karpenter-provisioner/tasks/main.yml
+---
+- name: &quot;Print test env name&quot;
+  debug:
+    msg: &quot;Creating Karpenter Provisioner for Test Env - {{ env_name }}&quot;
+
+- name: &quot;Create a tmp dir to store files&quot;
+  file:
+    path: &quot;{{ tmp_dir }}&quot;
+    state: directory
+
+- name: &quot;Render the template file and copy it to tmp dir&quot;
+  ansible.builtin.template:
+    src: &quot;templates/provisioner.yaml.j2&quot;
+    dest: &quot;{{ tmp_dir }}&quot;
+    mode: &quot;0644&quot;
+
+- name: &quot;Print Ansible rendered manifest template&quot;
+  debug:
+    msg: &quot;{{ lookup(&#39;file&#39;, &#39;{{ tmp_dir }}/provisioner.yaml.j2&#39;) }}&quot;
+
+- name: Create the Karpenter Provisioner
+  kubernetes.core.k8s:
+    state: present
+    src: &quot;{{ tmp_dir }}/provisioner.yaml.j2&quot;
+
+- name: &quot;Delete the tmp dir&quot;
+  file:
+    path: &quot;{{ tmp_dir }}&quot;
+    state: absent
+
+
+
+src/ansible/roles/create-karpenter-provisioner/templates/provisioner.yaml.j2
+---
+#jinja2: trim_blocks: False
+
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: &quot;{{ env_name }}-{{ deployment_mode }}-prov&quot;
+spec:
+  labels:
+    env_name: {{ env_name }}
+    deployment_mode: {{ deployment_mode }}
+  providerRef:
+    name: {{ aws_node_template_name }}
+  requirements:
+    - key: kubernetes.io/arch
+      operator: In
+      values:
+        - amd64
+    - key: kubernetes.io/os
+      operator: In
+      values:
+        - linux
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values:
+        - on-demand
+    - key: node.kubernetes.io/instance-type
+      operator: In
+      values:
+        - {{ mode_settings[deployment_mode].instance_type }}   
+  limits:
+    resources:
+      {{ mode_settings[deployment_mode].limits | to_yaml }}
+  taints:
+    - effect: NoSchedule
+      key: env_name
+      value: {{ env_name }}
+    - effect: NoSchedule
+      key: deployment_mode
+      value: {{ deployment_mode }}
+  ttlSecondsAfterEmpty: 60
+  ttlSecondsUntilExpired: 1209600
+
+
+</pre>
+</div></div><p><br/></p><h3 id="AboutKarpenter-Howdoweensurethatonetestenvironmentrunsonasingle,dedicated,node?">How do we ensure that one test environment runs on a single, dedicated, node?</h3><p>When an test environment is created, we dynamically create a dedicated provisioner for that test environment.</p><p>The provisioner has the following configured:</p><ul style="list-style-type: square;"><li>labels the node: environment: &lt;name-of-test-env&gt;</li><li>taints the node with:environment: &lt;name-of-test-env&gt;NoSchedule</li></ul><p>Then, when deploying all the project-z Pilot applications for the test environment, we configure the following for each of them:</p><ul><li>nodeSelector: environment: &lt;name-of-test-env&gt;</li><li>tolerations for: environment: &lt;name-of-test-env&gt;:NoSchedule</li></ul>
+                    </div>
+
+                                                            <div class="pageSection group">
+                                
+                </div>             </div> 
+            <div id="footer" role="contentinfo">
+                <section class="footer-body">
+                </section>
+            </div>
+        </div>     </body>
+</html>
