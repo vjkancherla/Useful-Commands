@@ -1,0 +1,3 @@
+https://github.com/bedag/helm-charts/tree/master/charts/raw
+
+Render raw kubernetes manifests managed by a helm release
