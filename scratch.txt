@@ -1,0 +1,22 @@
+I have two application, that I deploy to two separate cloud infrastructures.
+The apps need each other to work correctly.
+App-1
+=====
+- has a proxy micro-service app
+- has a Database
+- connects to backend app (App-2)
+- the proxy micro-service app can only run correctly after App-2 has started
+
+App-2
+======
+- has the backend micro-service app
+- needs the DB running (part of App-1) to be able to startup
+
+I have run into a problem with some automation I am trying to create.
+I trying to auto-deploy both the apps using separate scripts. The URL of each app will change with each deployment.
+Each script needs the URL to the other app.
+Questions:
+How can I make sure that the apps are started corrected, in the correct order?
+However Can I reference the URLs in the scripts if they keep changing with each deployment?
+
+PS: I have a fully functioning "defualt" app deployments. Can I temporary leverage this default deployment somehow to mitigate the complexities?

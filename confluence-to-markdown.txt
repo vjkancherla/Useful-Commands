@@ -1,0 +1,25 @@
+CONVERT CONFLUENCE PAGE TO MARKDOWN
+==============================
+
+In Confluence:
+1. Click on "Space tools" in the bottom-left-hand-side
+2. Then click on "Content Tools"
+3. On the "Content Tools" page, click on "Export" tab
+4. Under "Export Formats", select the "HTML" radio-button and click "Next"
+5. Click Export
+6. Click on "Download Here" to download the HTML versions of ALL PAGES IN OUR OWN SPACE
+
+
+In the downloads directory, you will see a new directory.
+
+Inside it find the confluence page that you want to convert to markdown. For example - Solution-Quarterly-Upgrades-Procedure_1133690576.html
+
+Open Solution-Quarterly-Upgrades-Procedure_1133690576.html in BBEdit. Copy all the contents to clipboard.
+
+Open https://metamug.com/util/confluence-to-markdown/
+
+Paste the copied content 
+
+The MarkDown content will be automatically generated.
+
+Copy the MarkDown content and paste it into a new file and save it with .md extension.

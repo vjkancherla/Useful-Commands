@@ -1,0 +1,134 @@
+========================================================
+How to Configure OpenLens to connect to an EKS Cluster
+=========================================================
+ 
+ 
+[1] Download and install OpenLens
+---------------------------------------
+ 
+- I recommend installing the OpenLens v6.2.5 version.
+- Post v6.2.5 certain useful features (get pod logs and login to pod) have been removed.
+ 
+-- https://github.com/MuhammedKalkan/OpenLens/releases/tag/v6.2.5
+ 
+ 
+ 
+[2] Create a new AWS config profile
+-----------------------------------------
+ 
+>> aws configure --profile test-eks-cluster
+ 
+IMPORTANT: Leave everything else as default and ONLY PROVIDE A VALUE FOR "region" (eu-west-2)
+ 
+ 
+You will see the following, new, block in ${HOME}/.aws/config file
+ 
+-------
+[profile test-eks-cluster]
+region = eu-west-2
+-------
+ 
+ 
+ 
+[3] Get Temporary AWS Credentials
+-------------------------------------
+- Identify the AWS crendentials that you want to use
+ 
+The copied credentials block should look like below:
+ 
+-----------------
+[IAM-Role-Name]
+aws_access_key_id=xxxxxxxxxxxxxxx
+aws_secret_access_key=xxxxxxxxxxxxxxxxx
+aws_session_token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+------------------
+ 
+Now, update the above/copied block:
+ 
+FROM:
+-----------------
+[IAM-Role-Name]
+aws_access_key_id=xxxxxxxxxxxxxxx
+aws_secret_access_key=xxxxxxxxxxxxxxxxx
+aws_session_token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+------------------
+ 
+TO:
+-----------------
+[test-eks-cluster] <------------ UPDATED THIS TO MATCH THE PROFILE CREATED EARLIER
+aws_access_key_id=xxxxxxxxxxxxxxx
+aws_secret_access_key=xxxxxxxxxxxxxxxxx
+aws_session_token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+------------------
+ 
+ 
+ 
+[4] Prepare local AWS credentials file
+-------------------------------------------
+Open ${HOME}/.aws/credentials file and copy the below block in:
+ 
+-----------------
+[test-eks-cluster]
+aws_access_key_id=xxxxxxxxxxxxxxx
+aws_secret_access_key=xxxxxxxxxxxxxxxxx
+aws_session_token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+------------------
+ 
+NOTE: if the above block already exists, then just overwrite:
+    - aws_access_key_id
+    - aws_secret_access_key
+    - aws_session_token
+ 
+ 
+ 
+[5] Prepare local kubeconfig file (${HOME}/.kube/config)
+----------------------------------------------------------
+Prepare local kubeconfig file to associate the AWS Profile with the user that is used to access test-eks-cluster EKS cluster
+ 
+- Open ${HOME}/.kube/config
+ 
+- Update the following block:
+ 
+FROM:
+-------
+users:
+- name: arn:aws:eks:eu-west-2:123456789:cluster/test-eks-cluster
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      args:
+      - --region
+      - eu-west-2
+      - eks
+      - get-token
+      - --cluster-name
+      - irtp-non-prod
+      - --output
+      - json
+      command: aws
+       
+            
+TO:
+-----
+users:
+- name: arn:aws:eks:eu-west-2:123456789:cluster/test-eks-cluster
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      args:
+      - --region
+      - eu-west-2
+      - eks
+      - get-token
+      - --cluster-name
+      - test-eks-cluster
+      - --output
+      - json
+      command: aws
+      env: <--------------- ADDED THIS
+        - name: AWS_PROFILE  <--------------- ADDED THIS
+          value: "test-eks-cluster"  <--------------- ADDED THIS
+ 
+     
+     
+[6] Open OpenLens, select test-eks-cluster cluster from the catalog, and connect to the cluster
