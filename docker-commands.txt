@@ -75,7 +75,10 @@ Note: The bridge network is the network in which containers are run by default
 -> to upload/download a file from the host to a container
    docker cp foo.txt mycontainer:/foo.txt
    docker cp mycontainer:/foo.txt foo.txt
-   
+
+-> docker system df -v
+
+-> docker builder prune
 
 SOME EXAMPLE DOCKER COMMANDS
 ------------------------------
