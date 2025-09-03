@@ -846,3 +846,7 @@ In Terraform, if Data sources are forcing replacement even though nothing has ch
 
 
 name = substr("farm-to-${each.value.name}", 0, min(length("farm-to-${each.value.name}"), 21))
+
+GDU: Fast disk usage analyzer with console interface written in Go
+gdu ~
+
